@@ -174,6 +174,43 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
 
+.color-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.color-label {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    color: #64748b !important;
+    margin-bottom: 0 !important;
+    white-space: nowrap;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 32px;
+    height: 24px;
+    padding: 1px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 1px;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
 .checkbox-row {
     display: flex;
     gap: 14px;
@@ -308,7 +345,6 @@ input[type="range"]::-moz-range-thumb {
     font-weight: bold;
     text-transform: uppercase;
     margin-bottom: 1px;
-    color: var(--voucher-border-color);
 }
 
 .org-info {
@@ -348,7 +384,6 @@ input[type="range"]::-moz-range-thumb {
 .serial-number {
     font-family: "Times New Roman", Georgia, serif;
     font-size: 9pt;
-    color: #d90429;
     font-weight: bold;
     white-space: nowrap;
 }
@@ -413,23 +448,27 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .footer {
-    display: flex;
-    justify-content: space-between;
     margin-top: 3mm;
     padding-top: 2mm;
     font-size: 9pt;
-}
-
-.sign-box {
-    width: 48%;
-    text-align: center;
 }
 
 .date-line {
     font-style: italic;
     margin-bottom: 2mm;
     font-size: 9pt;
+    text-align: right;
     white-space: nowrap;
+}
+
+.sign-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sign-box {
+    width: 48%;
+    text-align: center;
 }
 
 .sign-title {
@@ -760,6 +799,10 @@ input[type="range"]::-moz-range-thumb {
                 <label class="range-label">Cỡ chữ: <span id="unitNameSizeVal">9.5</span>pt</label>
                 <input type="range" id="unitNameSize" min="7" max="16" step="0.5" value="9.5" oninput="updatePreview()">
             </div>
+            <div class="color-row">
+                <label class="color-label">Màu chữ:</label>
+                <input type="color" id="unitNameColor" value="#1e40af" oninput="updatePreview()">
+            </div>
         </div>
 
         <div class="form-group">
@@ -792,14 +835,23 @@ input[type="range"]::-moz-range-thumb {
             Quản Lý Số In
         </div>
 
+        <div class="form-group">
+            <label>Tiền tố số series <span style="color:#94a3b8; font-weight:400;">(để trống = không có)</span></label>
+            <input type="text" id="serialPrefix" placeholder="VD: 2602" oninput="updatePreview()">
+            <div class="color-row">
+                <label class="color-label">Màu số series:</label>
+                <input type="color" id="serialColor" value="#d90429" oninput="updatePreview()">
+            </div>
+        </div>
+
         <div class="row">
             <div class="col">
                 <label>Từ số (Min)</label>
                 <input type="number" id="minNum" value="1" min="1" oninput="updatePreview()">
             </div>
             <div class="col">
-                <label>Đến số (Max)</label>
-                <input type="number" id="maxNum" value="1" min="1">
+                <label>Đến số (Max) <span style="color:#94a3b8; font-weight:400;">tối đa 500</span></label>
+                <input type="number" id="maxNum" value="1" min="1" max="500">
             </div>
         </div>
         <div class="helper-text">
@@ -913,6 +965,14 @@ input[type="range"]::-moz-range-thumb {
             </div>
         </div>
 
+        <!-- Sub: Chân trang -->
+        <div class="sub-section-title">Chân trang</div>
+
+        <div class="form-group">
+            <label>Dòng ngày tháng</label>
+            <input type="text" id="dateLine" placeholder="Ngày ...... tháng ...... năm 20......" oninput="updatePreview()">
+        </div>
+
         <hr class="divider">
 
         <div class="form-group">
@@ -972,8 +1032,8 @@ input[type="range"]::-moz-range-thumb {
 
     <script>
 // --- CẤU HÌNH & STATE ---
-const CONFIG_KEY = 'fuel_voucher_config';
-const CONFIG_VERSION = 'v1.4.0-2026-02-10';
+const CONFIG_KEY = 'petro_slip_1_4_2_20260210';
+const CONFIG_VERSION = 'v1.4.2-2026-02-10';
 const MAX_LIMIT = 500;
 
 // Lấy tất cả settings hiện tại từ form
@@ -989,13 +1049,18 @@ function getSettings() {
 
 // Template HTML cho 1 tờ phiếu (2 liên)
 const getVoucherTemplate = (data, serialNum, paperSize = 'A5', settings = {}, orientation = 'portrait') => {
-    const now = new Date();
-    const yy = now.getFullYear().toString().slice(-2);
-    const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-    const fullSerial = `${yy}${mm}/${serialNum.toString().padStart(4, '0')}`;
+    const serialSuffix = serialNum.toString().padStart(4, '0');
+    const fullSerial = data.serialPrefix
+        ? `${data.serialPrefix}/${serialSuffix}`
+        : serialSuffix;
     const pageClass = (paperSize === 'A6' ? 'page-a6' : 'page-a5') + (orientation === 'portrait' ? ' page-portrait' : '');
 
-    const orgNameStyle = settings.unitNameSize ? `font-size: ${settings.unitNameSize}pt` : '';
+    const unitNameColor = data.unitNameColor || '#1e40af';
+    const serialColor = data.serialColor || '#d90429';
+    const orgNameStyle = [
+        settings.unitNameSize ? `font-size: ${settings.unitNameSize}pt` : '',
+        `color: ${unitNameColor}`,
+    ].filter(Boolean).join('; ');
     const addressStyle = settings.addressSize ? `font-size: ${settings.addressSize}pt` : '';
     const headerStyle = settings.headerLineHeight ? `line-height: ${settings.headerLineHeight}` : '';
     const bodyStyle = [
@@ -1036,7 +1101,7 @@ const getVoucherTemplate = (data, serialNum, paperSize = 'A5', settings = {}, or
                 <div class="voucher-title">${data.voucherTitle}</div>
                 <div class="lien-serial-row">
                     <div class="lien-so">${lienText}</div>
-                    <div class="serial-number">Số: ${fullSerial}</div>
+                    <div class="serial-number" style="color: ${serialColor}">Số: ${fullSerial}</div>
                 </div>
             </div>
 
@@ -1057,7 +1122,7 @@ const getVoucherTemplate = (data, serialNum, paperSize = 'A5', settings = {}, or
                 <div class="fuel-row">
                     <span class="label">${data.moneyLabel}:</span>
                     ${valueOrDots(data.moneyValue)}
-                    ${data.moneyUnit ? `<span class="label">${data.moneyUnit}</span>` : ''}
+                    ${data.moneyUnit ? `<span class="label" style="margin-left: 4px;">${data.moneyUnit}</span>` : ''}
                 </div>
                 <div class="fuel-row">
                     <span class="label">${data.textAmountLabel}:</span>
@@ -1066,16 +1131,18 @@ const getVoucherTemplate = (data, serialNum, paperSize = 'A5', settings = {}, or
             </div>
 
             <div class="footer">
-                <div class="sign-box">
-                    <div class="sign-title">Người nhận</div>
-                    <div class="sign-note">(Ký, ghi rõ họ tên)</div>
-                    <div class="sign-space"></div>
-                </div>
-                <div class="sign-box">
-                    <div class="date-line">Ngày ...... tháng ...... năm 20......</div>
-                    <div class="sign-title">Người lập phiếu</div>
-                    <div class="sign-note">(Ký, ghi rõ họ tên)</div>
-                    <div class="sign-space"></div>
+                <div class="date-line">${data.dateLine}</div>
+                <div class="sign-row">
+                    <div class="sign-box">
+                        <div class="sign-title">Người nhận</div>
+                        <div class="sign-note">(Ký, ghi rõ họ tên)</div>
+                        <div class="sign-space"></div>
+                    </div>
+                    <div class="sign-box">
+                        <div class="sign-title">Người lập phiếu</div>
+                        <div class="sign-note">(Ký, ghi rõ họ tên)</div>
+                        <div class="sign-space"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1128,10 +1195,16 @@ function loadConfig() {
         document.getElementById('field2Value').value = config.field2Value || '';
         document.getElementById('fuelSectionLabel').value = config.fuelSectionLabel || 'Số lượng xăng/dầu được cấp:';
         document.getElementById('moneyLabel').value = config.moneyLabel || 'Số tiền';
-        document.getElementById('moneyUnit').value = config.moneyUnit !== undefined ? config.moneyUnit : 'VNĐ';
+        document.getElementById('moneyUnit').value = config.moneyUnit !== undefined ? config.moneyUnit : ' VNĐ';
         document.getElementById('moneyValue').value = config.moneyValue || '';
         document.getElementById('textAmountLabel').value = config.textAmountLabel || 'Bằng chữ';
         document.getElementById('textAmountValue').value = config.textAmountValue || '';
+        document.getElementById('dateLine').value = config.dateLine || 'Ngày ...... tháng ...... năm 20......';
+        if (config.serialPrefix !== undefined) {
+            document.getElementById('serialPrefix').value = config.serialPrefix;
+        }
+        document.getElementById('unitNameColor').value = config.unitNameColor || '#1e40af';
+        document.getElementById('serialColor').value = config.serialColor || '#d90429';
 
         if (config.paperSize) {
             document.getElementById('paperSize').value = config.paperSize;
@@ -1186,6 +1259,14 @@ function applyDefaults() {
     document.getElementById('moneyValue').value = '';
     document.getElementById('textAmountLabel').value = 'Bằng chữ';
     document.getElementById('textAmountValue').value = '';
+    document.getElementById('dateLine').value = 'Ngày ...... tháng ...... năm 20......';
+    document.getElementById('unitNameColor').value = '#1e40af';
+    document.getElementById('serialColor').value = '#d90429';
+    // Default serial prefix = YYMM
+    const now = new Date();
+    const yy = now.getFullYear().toString().slice(-2);
+    const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+    document.getElementById('serialPrefix').value = `${yy}${mm}`;
 }
 
 function saveConfig(currentMax) {
@@ -1211,6 +1292,10 @@ function saveConfig(currentMax) {
         moneyValue: document.getElementById('moneyValue').value,
         textAmountLabel: document.getElementById('textAmountLabel').value,
         textAmountValue: document.getElementById('textAmountValue').value,
+        dateLine: document.getElementById('dateLine').value,
+        serialPrefix: document.getElementById('serialPrefix').value,
+        unitNameColor: document.getElementById('unitNameColor').value,
+        serialColor: document.getElementById('serialColor').value,
         paperSize: document.getElementById('paperSize').value,
         paperOrientation: document.getElementById('paperOrientation').value,
         lastMax: currentMax,
@@ -1253,6 +1338,10 @@ function autoSaveConfig() {
         moneyValue: document.getElementById('moneyValue').value,
         textAmountLabel: document.getElementById('textAmountLabel').value,
         textAmountValue: document.getElementById('textAmountValue').value,
+        dateLine: document.getElementById('dateLine').value,
+        serialPrefix: document.getElementById('serialPrefix').value,
+        unitNameColor: document.getElementById('unitNameColor').value,
+        serialColor: document.getElementById('serialColor').value,
         paperSize: document.getElementById('paperSize').value,
         paperOrientation: document.getElementById('paperOrientation').value,
         lastMax: lastMax,
@@ -1287,6 +1376,10 @@ function getData() {
         moneyValue: document.getElementById('moneyValue').value,
         textAmountLabel: document.getElementById('textAmountLabel').value || 'Bằng chữ',
         textAmountValue: document.getElementById('textAmountValue').value,
+        dateLine: document.getElementById('dateLine').value || 'Ngày ...... tháng ...... năm 20......',
+        serialPrefix: document.getElementById('serialPrefix').value,
+        unitNameColor: document.getElementById('unitNameColor').value,
+        serialColor: document.getElementById('serialColor').value,
     };
 }
 
@@ -1307,10 +1400,8 @@ function updatePreview() {
     document.getElementById('lineHeightVal').textContent = settings.lineHeight;
 
     // Cập nhật format preview
-    const now = new Date();
-    const yy = now.getFullYear().toString().slice(-2);
-    const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-    document.getElementById('formatPreview').innerText = `${yy}${mm}/XXXX`;
+    const prefix = document.getElementById('serialPrefix').value;
+    document.getElementById('formatPreview').innerText = prefix ? `${prefix}/XXXX` : 'XXXX';
 
     // Cập nhật số lượng phiếu
     const min = parseInt(document.getElementById('minNum').value) || 1;
@@ -1407,10 +1498,15 @@ function changePaperSize() {
     updatePreview();
 }
 
-// Thêm listener cho maxNum để cập nhật số lượng
+// Thêm listener cho maxNum để cập nhật số lượng + validate
 document.getElementById('maxNum').addEventListener('input', function() {
+    let max = parseInt(this.value) || 1;
+    if (max > MAX_LIMIT) {
+        alert(`Giá trị Max không được vượt quá ${MAX_LIMIT}!`);
+        this.value = MAX_LIMIT;
+        max = MAX_LIMIT;
+    }
     const min = parseInt(document.getElementById('minNum').value) || 1;
-    const max = parseInt(this.value) || 1;
     const total = Math.max(0, max - min + 1);
     document.getElementById('totalCount').textContent = total;
     autoSaveConfig();

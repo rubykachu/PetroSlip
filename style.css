@@ -167,6 +167,43 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
 
+.color-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.color-label {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    color: #64748b !important;
+    margin-bottom: 0 !important;
+    white-space: nowrap;
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 32px;
+    height: 24px;
+    padding: 1px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 1px;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
 .checkbox-row {
     display: flex;
     gap: 14px;
@@ -301,7 +338,6 @@ input[type="range"]::-moz-range-thumb {
     font-weight: bold;
     text-transform: uppercase;
     margin-bottom: 1px;
-    color: var(--voucher-border-color);
 }
 
 .org-info {
@@ -341,7 +377,6 @@ input[type="range"]::-moz-range-thumb {
 .serial-number {
     font-family: "Times New Roman", Georgia, serif;
     font-size: 9pt;
-    color: #d90429;
     font-weight: bold;
     white-space: nowrap;
 }
@@ -406,23 +441,27 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .footer {
-    display: flex;
-    justify-content: space-between;
     margin-top: 3mm;
     padding-top: 2mm;
     font-size: 9pt;
-}
-
-.sign-box {
-    width: 48%;
-    text-align: center;
 }
 
 .date-line {
     font-style: italic;
     margin-bottom: 2mm;
     font-size: 9pt;
+    text-align: right;
     white-space: nowrap;
+}
+
+.sign-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sign-box {
+    width: 48%;
+    text-align: center;
 }
 
 .sign-title {

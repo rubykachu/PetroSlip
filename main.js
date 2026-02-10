@@ -1,6 +1,6 @@
 // --- CẤU HÌNH & STATE ---
-const CONFIG_KEY = 'petro_slip_20260210';
-const CONFIG_VERSION = 'v1.4.1-2026-02-10';
+const CONFIG_KEY = 'petro_slip_1_4_2_20260210';
+const CONFIG_VERSION = 'v1.4.2-2026-02-10';
 const MAX_LIMIT = 500;
 
 // Lấy tất cả settings hiện tại từ form
@@ -16,13 +16,18 @@ function getSettings() {
 
 // Template HTML cho 1 tờ phiếu (2 liên)
 const getVoucherTemplate = (data, serialNum, paperSize = 'A5', settings = {}, orientation = 'portrait') => {
-    const now = new Date();
-    const yy = now.getFullYear().toString().slice(-2);
-    const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-    const fullSerial = `${yy}${mm}/${serialNum.toString().padStart(4, '0')}`;
+    const serialSuffix = serialNum.toString().padStart(4, '0');
+    const fullSerial = data.serialPrefix
+        ? `${data.serialPrefix}/${serialSuffix}`
+        : serialSuffix;
     const pageClass = (paperSize === 'A6' ? 'page-a6' : 'page-a5') + (orientation === 'portrait' ? ' page-portrait' : '');
 
-    const orgNameStyle = settings.unitNameSize ? `font-size: ${settings.unitNameSize}pt` : '';
+    const unitNameColor = data.unitNameColor || '#1e40af';
+    const serialColor = data.serialColor || '#d90429';
+    const orgNameStyle = [
+        settings.unitNameSize ? `font-size: ${settings.unitNameSize}pt` : '',
+        `color: ${unitNameColor}`,
+    ].filter(Boolean).join('; ');
     const addressStyle = settings.addressSize ? `font-size: ${settings.addressSize}pt` : '';
     const headerStyle = settings.headerLineHeight ? `line-height: ${settings.headerLineHeight}` : '';
     const bodyStyle = [
@@ -63,7 +68,7 @@ const getVoucherTemplate = (data, serialNum, paperSize = 'A5', settings = {}, or
                 <div class="voucher-title">${data.voucherTitle}</div>
                 <div class="lien-serial-row">
                     <div class="lien-so">${lienText}</div>
-                    <div class="serial-number">Số: ${fullSerial}</div>
+                    <div class="serial-number" style="color: ${serialColor}">Số: ${fullSerial}</div>
                 </div>
             </div>
 
@@ -84,7 +89,7 @@ const getVoucherTemplate = (data, serialNum, paperSize = 'A5', settings = {}, or
                 <div class="fuel-row">
                     <span class="label">${data.moneyLabel}:</span>
                     ${valueOrDots(data.moneyValue)}
-                    ${data.moneyUnit ? `<span class="label">${data.moneyUnit}</span>` : ''}
+                    ${data.moneyUnit ? `<span class="label" style="margin-left: 3px;">${data.moneyUnit}</span>` : ''}
                 </div>
                 <div class="fuel-row">
                     <span class="label">${data.textAmountLabel}:</span>
@@ -93,16 +98,18 @@ const getVoucherTemplate = (data, serialNum, paperSize = 'A5', settings = {}, or
             </div>
 
             <div class="footer">
-                <div class="sign-box">
-                    <div class="sign-title">Người nhận</div>
-                    <div class="sign-note">(Ký, ghi rõ họ tên)</div>
-                    <div class="sign-space"></div>
-                </div>
-                <div class="sign-box">
-                    <div class="date-line">Ngày ...... tháng ...... năm 20......</div>
-                    <div class="sign-title">Người lập phiếu</div>
-                    <div class="sign-note">(Ký, ghi rõ họ tên)</div>
-                    <div class="sign-space"></div>
+                <div class="date-line">${data.dateLine}</div>
+                <div class="sign-row">
+                    <div class="sign-box">
+                        <div class="sign-title">Người nhận</div>
+                        <div class="sign-note">(Ký, ghi rõ họ tên)</div>
+                        <div class="sign-space"></div>
+                    </div>
+                    <div class="sign-box">
+                        <div class="sign-title">Người lập phiếu</div>
+                        <div class="sign-note">(Ký, ghi rõ họ tên)</div>
+                        <div class="sign-space"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -159,6 +166,12 @@ function loadConfig() {
         document.getElementById('moneyValue').value = config.moneyValue || '';
         document.getElementById('textAmountLabel').value = config.textAmountLabel || 'Bằng chữ';
         document.getElementById('textAmountValue').value = config.textAmountValue || '';
+        document.getElementById('dateLine').value = config.dateLine || 'Ngày ...... tháng ...... năm 20......';
+        if (config.serialPrefix !== undefined) {
+            document.getElementById('serialPrefix').value = config.serialPrefix;
+        }
+        document.getElementById('unitNameColor').value = config.unitNameColor || '#1e40af';
+        document.getElementById('serialColor').value = config.serialColor || '#d90429';
 
         if (config.paperSize) {
             document.getElementById('paperSize').value = config.paperSize;
@@ -213,6 +226,14 @@ function applyDefaults() {
     document.getElementById('moneyValue').value = '';
     document.getElementById('textAmountLabel').value = 'Bằng chữ';
     document.getElementById('textAmountValue').value = '';
+    document.getElementById('dateLine').value = 'Ngày ...... tháng ...... năm 20......';
+    document.getElementById('unitNameColor').value = '#1e40af';
+    document.getElementById('serialColor').value = '#d90429';
+    // Default serial prefix = YYMM
+    const now = new Date();
+    const yy = now.getFullYear().toString().slice(-2);
+    const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+    document.getElementById('serialPrefix').value = `${yy}${mm}`;
 }
 
 function saveConfig(currentMax) {
@@ -238,6 +259,10 @@ function saveConfig(currentMax) {
         moneyValue: document.getElementById('moneyValue').value,
         textAmountLabel: document.getElementById('textAmountLabel').value,
         textAmountValue: document.getElementById('textAmountValue').value,
+        dateLine: document.getElementById('dateLine').value,
+        serialPrefix: document.getElementById('serialPrefix').value,
+        unitNameColor: document.getElementById('unitNameColor').value,
+        serialColor: document.getElementById('serialColor').value,
         paperSize: document.getElementById('paperSize').value,
         paperOrientation: document.getElementById('paperOrientation').value,
         lastMax: currentMax,
@@ -280,6 +305,10 @@ function autoSaveConfig() {
         moneyValue: document.getElementById('moneyValue').value,
         textAmountLabel: document.getElementById('textAmountLabel').value,
         textAmountValue: document.getElementById('textAmountValue').value,
+        dateLine: document.getElementById('dateLine').value,
+        serialPrefix: document.getElementById('serialPrefix').value,
+        unitNameColor: document.getElementById('unitNameColor').value,
+        serialColor: document.getElementById('serialColor').value,
         paperSize: document.getElementById('paperSize').value,
         paperOrientation: document.getElementById('paperOrientation').value,
         lastMax: lastMax,
@@ -314,6 +343,10 @@ function getData() {
         moneyValue: document.getElementById('moneyValue').value,
         textAmountLabel: document.getElementById('textAmountLabel').value || 'Bằng chữ',
         textAmountValue: document.getElementById('textAmountValue').value,
+        dateLine: document.getElementById('dateLine').value || 'Ngày ...... tháng ...... năm 20......',
+        serialPrefix: document.getElementById('serialPrefix').value,
+        unitNameColor: document.getElementById('unitNameColor').value,
+        serialColor: document.getElementById('serialColor').value,
     };
 }
 
@@ -334,10 +367,8 @@ function updatePreview() {
     document.getElementById('lineHeightVal').textContent = settings.lineHeight;
 
     // Cập nhật format preview
-    const now = new Date();
-    const yy = now.getFullYear().toString().slice(-2);
-    const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-    document.getElementById('formatPreview').innerText = `${yy}${mm}/XXXX`;
+    const prefix = document.getElementById('serialPrefix').value;
+    document.getElementById('formatPreview').innerText = prefix ? `${prefix}/XXXX` : 'XXXX';
 
     // Cập nhật số lượng phiếu
     const min = parseInt(document.getElementById('minNum').value) || 1;
@@ -434,10 +465,15 @@ function changePaperSize() {
     updatePreview();
 }
 
-// Thêm listener cho maxNum để cập nhật số lượng
+// Thêm listener cho maxNum để cập nhật số lượng + validate
 document.getElementById('maxNum').addEventListener('input', function() {
+    let max = parseInt(this.value) || 1;
+    if (max > MAX_LIMIT) {
+        alert(`Giá trị Max không được vượt quá ${MAX_LIMIT}!`);
+        this.value = MAX_LIMIT;
+        max = MAX_LIMIT;
+    }
     const min = parseInt(document.getElementById('minNum').value) || 1;
-    const max = parseInt(this.value) || 1;
     const total = Math.max(0, max - min + 1);
     document.getElementById('totalCount').textContent = total;
     autoSaveConfig();
