@@ -153,7 +153,7 @@ function loadConfig() {
         document.getElementById('field1Value').value = config.field1Value || '';
         document.getElementById('field2Label').value = config.field2Label || 'Tên lái xe';
         document.getElementById('field2Value').value = config.field2Value || '';
-        document.getElementById('fuelSectionLabel').value = config.fuelSectionLabel || 'Số lượng xăng/dầu được cấp';
+        document.getElementById('fuelSectionLabel').value = config.fuelSectionLabel || 'Số lượng xăng/dầu được cấp:';
         document.getElementById('moneyLabel').value = config.moneyLabel || 'Số tiền';
         document.getElementById('moneyUnit').value = config.moneyUnit !== undefined ? config.moneyUnit : 'VNĐ';
         document.getElementById('moneyValue').value = config.moneyValue || '';
@@ -207,7 +207,7 @@ function applyDefaults() {
     document.getElementById('field1Value').value = '';
     document.getElementById('field2Label').value = 'Tên lái xe';
     document.getElementById('field2Value').value = '';
-    document.getElementById('fuelSectionLabel').value = 'Số lượng xăng/dầu được cấp';
+    document.getElementById('fuelSectionLabel').value = 'Số lượng xăng/dầu được cấp:';
     document.getElementById('moneyLabel').value = 'Số tiền';
     document.getElementById('moneyUnit').value = 'VNĐ';
     document.getElementById('moneyValue').value = '';
@@ -308,7 +308,7 @@ function getData() {
         field1Value: document.getElementById('field1Value').value,
         field2Label: document.getElementById('field2Label').value || 'Tên lái xe',
         field2Value: document.getElementById('field2Value').value,
-        fuelSectionLabel: document.getElementById('fuelSectionLabel').value || 'Số lượng xăng/dầu được cấp',
+        fuelSectionLabel: document.getElementById('fuelSectionLabel').value || 'Số lượng xăng/dầu được cấp:',
         moneyLabel: document.getElementById('moneyLabel').value || 'Số tiền',
         moneyUnit: document.getElementById('moneyUnit').value,
         moneyValue: document.getElementById('moneyValue').value,
