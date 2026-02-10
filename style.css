@@ -1,0 +1,735 @@
+/* --- RESET & BASE STYLES --- */
+:root {
+    --primary-color: #1e40af;
+    --primary-hover: #1e3a8a;
+    --border-color: #cbd5e1;
+    --bg-color: #e2e8f0;
+    --paper-width: 210mm;  /* A5 Ngang */
+    --paper-height: 148mm; /* A5 Ngang */
+    --voucher-border-color: #1e40af;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "Times New Roman", Georgia, serif;
+    background: var(--bg-color);
+    color: #1a1a1a;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+}
+
+/* --- UI: SIDEBAR (CẤU HÌNH) --- */
+#sidebar {
+    width: 380px;
+    min-width: 380px;
+    background: #fff;
+    border-right: 1px solid var(--border-color);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+    z-index: 10;
+}
+
+.section-title {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--primary-color);
+}
+
+.sub-section-title {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin: 4px 0 8px 0;
+    padding: 6px 0 4px 0;
+    border-bottom: 1px dashed #cbd5e1;
+}
+
+.form-group { margin-bottom: 12px; }
+
+label {
+    display: block;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+    color: #475569;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.row { display: flex; gap: 12px; }
+.col { flex: 1; }
+
+.divider {
+    border: 0;
+    border-top: 1px dashed #e2e8f0;
+    margin: 8px 0;
+}
+
+.helper-text {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #64748b;
+    font-size: 0.75rem;
+    margin-top: 6px;
+}
+
+.range-row {
+    margin-top: 6px;
+}
+
+.range-label {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+    margin-bottom: 4px !important;
+}
+
+.range-label span {
+    font-weight: 700;
+    color: var(--primary-color);
+    min-width: 36px;
+    text-align: right;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #e2e8f0;
+    outline: none;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.checkbox-row {
+    display: flex;
+    gap: 14px;
+    margin-top: 6px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #64748b;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.btn {
+    padding: 14px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    margin-top: auto;
+}
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+    margin-top: 8px;
+    border: 1px solid #e2e8f0;
+}
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+.app-version {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+    font-size: 11px;
+    color: #94a3b8;
+    line-height: 1.5;
+}
+
+/* --- UI: PREVIEW AREA --- */
+#main-content {
+    flex: 1;
+    padding: 32px;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+}
+
+/* --- VOUCHER DESIGN (Shared for Preview & Print) --- */
+.page {
+    width: var(--paper-width);
+    height: var(--paper-height);
+    background: #fff;
+    display: flex;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    overflow: hidden;
+    page-break-after: always;
+    /* border: 2px solid var(--voucher-border-color); */
+}
+
+/* Đường xé giữa (Perforation) */
+.perforation {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    border-left: 2px dashed var(--voucher-border-color);
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+/* Một liên (Trái hoặc Phải) */
+.voucher-half {
+    width: 50%;
+    height: 100%;
+    padding: 6mm 6mm 4mm 8mm;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    font-family: "Times New Roman", Georgia, serif;
+}
+
+/* Nội dung chi tiết */
+.header {
+    text-align: center;
+    margin-bottom: 3mm;
+    border-bottom: 1px solid var(--voucher-border-color);
+    padding-bottom: 2mm;
+}
+
+.org-name {
+    font-size: 9.5pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 1px;
+    color: var(--voucher-border-color);
+}
+
+.org-info {
+    font-size: 8pt;
+    font-style: italic;
+    color: #333;
+}
+
+.mst {
+    font-size: 8pt;
+    font-weight: bold;
+    margin-top: 1px;
+}
+
+.title-block {
+    margin: 2mm 0 3mm 0;
+    text-align: center;
+    position: relative;
+}
+
+.voucher-title {
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 14pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.lien-serial-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 1mm;
+}
+
+.serial-number {
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 9pt;
+    color: #d90429;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.lien-so {
+    font-size: 9pt;
+    font-style: italic;
+}
+
+.body-content {
+    flex: 1;
+    font-size: 10pt;
+    line-height: 1.5;
+}
+
+.line {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 2mm;
+    flex-wrap: nowrap;
+}
+
+.line-inline {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 2mm;
+}
+
+.label {
+    white-space: nowrap;
+    margin-right: 3px;
+}
+
+.dots {
+    border-bottom: 1px dotted #333;
+    flex: 1;
+    min-width: 15mm;
+    height: 14px;
+}
+
+.prefilled-value {
+    border-bottom: 1px dotted #333;
+    flex: 1;
+    padding-bottom: 1px;
+}
+
+.fuel-section-gap {
+    margin-top: 2mm;
+}
+
+.section-label {
+    font-weight: bold;
+    margin-bottom: 1mm;
+    display: block;
+}
+
+.fuel-row {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 1.5mm;
+    padding-left: 3mm;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3mm;
+    padding-top: 2mm;
+    font-size: 9pt;
+}
+
+.sign-box {
+    width: 48%;
+    text-align: center;
+}
+
+.date-line {
+    font-style: italic;
+    margin-bottom: 2mm;
+    font-size: 9pt;
+    white-space: nowrap;
+}
+
+.sign-title {
+    font-weight: bold;
+    font-size: 9pt;
+}
+
+.sign-note {
+    font-size: 8pt;
+    font-style: italic;
+}
+
+.sign-space {
+    height: 18mm;
+}
+
+/* --- PRINT MODE --- */
+#print-container { display: none; }
+
+@media print {
+    @page {
+        margin: 0;
+    }
+
+    body {
+        background: white;
+        height: auto;
+        overflow: visible;
+        display: block;
+    }
+
+    #sidebar, #main-content { display: none !important; }
+
+    #print-container {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .page {
+        box-shadow: none;
+        margin: 0;
+        page-break-after: always;
+        break-after: page;
+    }
+
+    .page.page-a5 {
+        width: 210mm;
+        height: 148mm;
+    }
+
+    .page.page-a6 {
+        width: 148mm;
+        height: 105mm;
+    }
+
+    .page.page-a5.page-portrait {
+        width: 148mm;
+        height: 210mm;
+    }
+
+    .page.page-a6.page-portrait {
+        width: 105mm;
+        height: 148mm;
+    }
+}
+
+/* Paper size classes */
+.page.page-a5 {
+    width: 210mm;
+    height: 148mm;
+}
+
+.page.page-a6 {
+    width: 148mm;
+    height: 105mm;
+}
+
+/* === A6 CHUNG (Base) === */
+.page.page-a6 .voucher-half {
+    padding: 3mm 3mm 2mm 4mm;
+}
+
+.page.page-a6 .header {
+    margin-bottom: 1.5mm;
+    padding-bottom: 1mm;
+}
+
+.page.page-a6 .org-name {
+    font-size: 6.5pt;
+}
+
+.page.page-a6 .org-info {
+    font-size: 6pt;
+}
+
+.page.page-a6 .mst {
+    font-size: 6pt;
+}
+
+.page.page-a6 .title-block {
+    margin: 1mm 0 1.5mm 0;
+}
+
+.page.page-a6 .voucher-title {
+    font-size: 9pt;
+}
+
+.page.page-a6 .serial-number {
+    font-size: 7pt;
+}
+
+.page.page-a6 .lien-so {
+    font-size: 7pt;
+}
+
+.page.page-a6 .lien-serial-row {
+    gap: 8px;
+    margin-top: 0.5mm;
+}
+
+.page.page-a6 .body-content {
+    font-size: 7.5pt;
+    line-height: 1.3;
+}
+
+.page.page-a6 .line {
+    margin-bottom: 1mm;
+}
+
+.page.page-a6 .fuel-row {
+    margin-bottom: 0.8mm;
+    padding-left: 2mm;
+}
+
+.page.page-a6 .fuel-section-gap {
+    margin-top: 1mm;
+}
+
+.page.page-a6 .section-label {
+    font-size: inherit;
+    margin-bottom: 0.5mm;
+}
+
+.page.page-a6 .footer {
+    font-size: 7pt;
+    margin-top: 1.5mm;
+    padding-top: 1mm;
+}
+
+.page.page-a6 .date-line {
+    font-size: 7pt;
+    margin-bottom: 1mm;
+}
+
+.page.page-a6 .sign-title {
+    font-size: 7pt;
+}
+
+.page.page-a6 .sign-note {
+    font-size: 6pt;
+}
+
+.page.page-a6 .sign-space {
+    height: 8mm;
+}
+
+.page.page-a6 .dots {
+    height: 10px;
+    min-width: 8mm;
+}
+
+.page.page-a6 .label {
+    margin-right: 2px;
+}
+
+/* --- PORTRAIT (DỌC) MODE --- */
+/* A5 Dọc: 148mm x 210mm */
+.page.page-a5.page-portrait {
+    width: 148mm;
+    height: 210mm;
+    flex-direction: column;
+}
+
+/* A6 Dọc: 105mm x 148mm */
+.page.page-a6.page-portrait {
+    width: 105mm;
+    height: 148mm;
+    flex-direction: column;
+}
+
+/* Portrait: 2 liên xếp trên-dưới */
+.page.page-portrait .voucher-half {
+    width: 100%;
+    height: 50%;
+}
+
+/* Portrait: đường xé ngang */
+.page.page-portrait .perforation {
+    left: 2%;
+    right: 2%;
+    top: 50%;
+    bottom: auto;
+    border-left: none;
+    border-top: 2px dashed var(--voucher-border-color);
+    transform: translateY(-50%);
+    width: auto;
+    height: 0;
+}
+
+/* === A6 DỌC: mỗi liên 105mm rộng × 74mm cao — nén tối đa chiều cao === */
+.page.page-a6.page-portrait .voucher-half {
+    padding: 2mm 3mm 1.5mm 3mm;
+}
+
+.page.page-a6.page-portrait .header {
+    margin-bottom: 1mm;
+    padding-bottom: 0.5mm;
+}
+
+.page.page-a6.page-portrait .org-name {
+    font-size: 6pt;
+}
+
+.page.page-a6.page-portrait .org-info {
+    font-size: 5.5pt;
+}
+
+.page.page-a6.page-portrait .mst {
+    font-size: 5.5pt;
+}
+
+.page.page-a6.page-portrait .title-block {
+    margin: 0.5mm 0 1mm 0;
+}
+
+.page.page-a6.page-portrait .voucher-title {
+    font-size: 8pt;
+}
+
+.page.page-a6.page-portrait .serial-number {
+    font-size: 6.5pt;
+}
+
+.page.page-a6.page-portrait .lien-so {
+    font-size: 6.5pt;
+}
+
+.page.page-a6.page-portrait .lien-serial-row {
+    gap: 6px;
+    margin-top: 0;
+}
+
+.page.page-a6.page-portrait .body-content {
+    font-size: 7pt;
+    line-height: 1.2;
+}
+
+.page.page-a6.page-portrait .line {
+    margin-bottom: 0.8mm;
+}
+
+.page.page-a6.page-portrait .fuel-row {
+    margin-bottom: 0.5mm;
+    padding-left: 1.5mm;
+}
+
+.page.page-a6.page-portrait .fuel-section-gap {
+    margin-top: 0.5mm;
+}
+
+.page.page-a6.page-portrait .section-label {
+    font-size: inherit;
+    margin-bottom: 0;
+}
+
+.page.page-a6.page-portrait .footer {
+    font-size: 6.5pt;
+    margin-top: 1mm;
+    padding-top: 0.5mm;
+}
+
+.page.page-a6.page-portrait .date-line {
+    font-size: 6.5pt;
+    margin-bottom: 0.5mm;
+}
+
+.page.page-a6.page-portrait .sign-title {
+    font-size: 6.5pt;
+}
+
+.page.page-a6.page-portrait .sign-note {
+    font-size: 5.5pt;
+}
+
+.page.page-a6.page-portrait .sign-space {
+    height: 5mm;
+}
+
+.page.page-a6.page-portrait .dots {
+    height: 9px;
+    min-width: 6mm;
+}
+
+/* === A5 DỌC: mỗi liên 148mm rộng × 105mm cao — thoải mái hơn === */
+.page.page-a5.page-portrait .voucher-half {
+    padding: 5mm 6mm 3mm 7mm;
+}

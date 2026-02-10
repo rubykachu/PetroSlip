@@ -3,735 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống In Phiếu Xăng Dầu (Static)</title>
-    <style>
-        /* --- RESET & BASE STYLES --- */
-        :root {
-            --primary-color: #1e40af;
-            --primary-hover: #1e3a8a;
-            --border-color: #cbd5e1;
-            --bg-color: #e2e8f0;
-            --paper-width: 210mm;  /* A5 Ngang */
-            --paper-height: 148mm; /* A5 Ngang */
-            --voucher-border-color: #1e40af;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: "Times New Roman", Georgia, serif;
-            background: var(--bg-color);
-            color: #1a1a1a;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-        }
-
-        /* --- UI: SIDEBAR (CẤU HÌNH) --- */
-        #sidebar {
-            width: 320px;
-            min-width: 320px;
-            background: #fff;
-            border-right: 1px solid var(--border-color);
-            padding: 24px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            overflow-y: auto;
-            box-shadow: 2px 0 12px rgba(0,0,0,0.08);
-            z-index: 10;
-        }
-
-        .section-title {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-title svg {
-            width: 18px;
-            height: 18px;
-            stroke: var(--primary-color);
-        }
-
-        .form-group { margin-bottom: 12px; }
-
-        label {
-            display: block;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            font-weight: 600;
-            font-size: 0.8rem;
-            margin-bottom: 6px;
-            color: #475569;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-        }
-
-        .row { display: flex; gap: 12px; }
-        .col { flex: 1; }
-
-        .divider {
-            border: 0;
-            border-top: 1px dashed #e2e8f0;
-            margin: 8px 0;
-        }
-
-        .helper-text {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            color: #64748b;
-            font-size: 0.75rem;
-            margin-top: 6px;
-        }
-
-        .range-row {
-            margin-top: 6px;
-        }
-
-        .range-label {
-            display: flex !important;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem !important;
-            color: #64748b !important;
-            font-weight: 500 !important;
-            margin-bottom: 4px !important;
-        }
-
-        .range-label span {
-            font-weight: 700;
-            color: var(--primary-color);
-            min-width: 36px;
-            text-align: right;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #e2e8f0;
-            outline: none;
-            padding: 0;
-            border: none;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            border: 2px solid #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            border: 2px solid #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-        }
-
-        .checkbox-row {
-            display: flex;
-            gap: 14px;
-            margin-top: 6px;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            color: #64748b;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .checkbox-label input[type="checkbox"] {
-            width: 14px;
-            height: 14px;
-            cursor: pointer;
-            accent-color: var(--primary-color);
-        }
-
-        .btn {
-            padding: 14px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            width: 100%;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-            margin-top: auto;
-        }
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            margin-top: 8px;
-            border: 1px solid #e2e8f0;
-        }
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-
-        .app-version {
-            margin-top: 16px;
-            padding-top: 12px;
-            border-top: 1px solid #e2e8f0;
-            text-align: center;
-            font-size: 11px;
-            color: #94a3b8;
-            line-height: 1.5;
-        }
-
-        /* --- UI: PREVIEW AREA --- */
-        #main-content {
-            flex: 1;
-            padding: 32px;
-            overflow: auto;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
-        }
-
-        /* --- VOUCHER DESIGN (Shared for Preview & Print) --- */
-        .page {
-            width: var(--paper-width);
-            height: var(--paper-height);
-            background: #fff;
-            display: flex;
-            position: relative;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            overflow: hidden;
-            page-break-after: always;
-            /* border: 2px solid var(--voucher-border-color); */
-        }
-
-        /* Đường xé giữa (Perforation) */
-        .perforation {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            border-left: 2px dashed var(--voucher-border-color);
-            transform: translateX(-50%);
-            z-index: 5;
-        }
-
-        /* Một liên (Trái hoặc Phải) */
-        .voucher-half {
-            width: 50%;
-            height: 100%;
-            padding: 6mm 6mm 4mm 8mm;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            font-family: "Times New Roman", Georgia, serif;
-        }
-
-        /* Nội dung chi tiết */
-        .header {
-            text-align: center;
-            margin-bottom: 3mm;
-            border-bottom: 1px solid var(--voucher-border-color);
-            padding-bottom: 2mm;
-        }
-
-        .org-name {
-            font-size: 9.5pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 1px;
-            color: var(--voucher-border-color);
-        }
-
-        .org-info {
-            font-size: 8pt;
-            font-style: italic;
-            color: #333;
-        }
-
-        .mst {
-            font-size: 8pt;
-            font-weight: bold;
-            margin-top: 1px;
-        }
-
-        .title-block {
-            margin: 2mm 0 3mm 0;
-            text-align: center;
-            position: relative;
-        }
-
-        .voucher-title {
-            font-family: "Times New Roman", Georgia, serif;
-            font-size: 14pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            text-align: center;
-        }
-
-        .lien-serial-row {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 1mm;
-        }
-
-        .serial-number {
-            font-family: "Times New Roman", Georgia, serif;
-            font-size: 9pt;
-            color: #d90429;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .lien-so {
-            font-size: 9pt;
-            font-style: italic;
-        }
-
-        .body-content {
-            flex: 1;
-            font-size: 10pt;
-            line-height: 1.5;
-        }
-
-        .line {
-            display: flex;
-            align-items: baseline;
-            margin-bottom: 2mm;
-            flex-wrap: nowrap;
-        }
-
-        .line-inline {
-            display: flex;
-            align-items: baseline;
-            margin-bottom: 2mm;
-        }
-
-        .label {
-            white-space: nowrap;
-            margin-right: 3px;
-        }
-
-        .dots {
-            border-bottom: 1px dotted #333;
-            flex: 1;
-            min-width: 15mm;
-            height: 14px;
-        }
-
-        .prefilled-value {
-            border-bottom: 1px dotted #333;
-            flex: 1;
-            padding-bottom: 1px;
-        }
-
-        .fuel-section-gap {
-            margin-top: 2mm;
-        }
-
-        .section-label {
-            font-weight: bold;
-            margin-bottom: 1mm;
-            display: block;
-        }
-
-        .fuel-row {
-            display: flex;
-            align-items: baseline;
-            margin-bottom: 1.5mm;
-            padding-left: 3mm;
-        }
-
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 3mm;
-            padding-top: 2mm;
-            font-size: 9pt;
-        }
-
-        .sign-box {
-            width: 48%;
-            text-align: center;
-        }
-
-        .date-line {
-            font-style: italic;
-            margin-bottom: 2mm;
-            font-size: 9pt;
-            white-space: nowrap;
-        }
-
-        .sign-title {
-            font-weight: bold;
-            font-size: 9pt;
-        }
-
-        .sign-note {
-            font-size: 8pt;
-            font-style: italic;
-        }
-
-        .sign-space {
-            height: 18mm;
-        }
-
-        /* --- PRINT MODE --- */
-        #print-container { display: none; }
-
-        @media print {
-            @page {
-                margin: 0;
-            }
-
-            body {
-                background: white;
-                height: auto;
-                overflow: visible;
-                display: block;
-            }
-
-            #sidebar, #main-content { display: none !important; }
-
-            #print-container {
-                display: block !important;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-            }
-
-            .page {
-                box-shadow: none;
-                margin: 0;
-                page-break-after: always;
-                break-after: page;
-            }
-
-            .page.page-a5 {
-                width: 210mm;
-                height: 148mm;
-            }
-
-            .page.page-a6 {
-                width: 148mm;
-                height: 105mm;
-            }
-
-            .page.page-a5.page-portrait {
-                width: 148mm;
-                height: 210mm;
-            }
-
-            .page.page-a6.page-portrait {
-                width: 105mm;
-                height: 148mm;
-            }
-        }
-
-        /* Paper size classes */
-        .page.page-a5 {
-            width: 210mm;
-            height: 148mm;
-        }
-
-        .page.page-a6 {
-            width: 148mm;
-            height: 105mm;
-        }
-
-        /* === A6 CHUNG (Base) === */
-        .page.page-a6 .voucher-half {
-            padding: 3mm 3mm 2mm 4mm;
-        }
-
-        .page.page-a6 .header {
-            margin-bottom: 1.5mm;
-            padding-bottom: 1mm;
-        }
-
-        .page.page-a6 .org-name {
-            font-size: 6.5pt;
-        }
-
-        .page.page-a6 .org-info {
-            font-size: 6pt;
-        }
-
-        .page.page-a6 .mst {
-            font-size: 6pt;
-        }
-
-        .page.page-a6 .title-block {
-            margin: 1mm 0 1.5mm 0;
-        }
-
-        .page.page-a6 .voucher-title {
-            font-size: 9pt;
-        }
-
-        .page.page-a6 .serial-number {
-            font-size: 7pt;
-        }
-
-        .page.page-a6 .lien-so {
-            font-size: 7pt;
-        }
-
-        .page.page-a6 .lien-serial-row {
-            gap: 8px;
-            margin-top: 0.5mm;
-        }
-
-        .page.page-a6 .body-content {
-            font-size: 7.5pt;
-            line-height: 1.3;
-        }
-
-        .page.page-a6 .line {
-            margin-bottom: 1mm;
-        }
-
-        .page.page-a6 .fuel-row {
-            margin-bottom: 0.8mm;
-            padding-left: 2mm;
-        }
-
-        .page.page-a6 .fuel-section-gap {
-            margin-top: 1mm;
-        }
-
-        .page.page-a6 .section-label {
-            font-size: inherit;
-            margin-bottom: 0.5mm;
-        }
-
-        .page.page-a6 .footer {
-            font-size: 7pt;
-            margin-top: 1.5mm;
-            padding-top: 1mm;
-        }
-
-        .page.page-a6 .date-line {
-            font-size: 7pt;
-            margin-bottom: 1mm;
-        }
-
-        .page.page-a6 .sign-title {
-            font-size: 7pt;
-        }
-
-        .page.page-a6 .sign-note {
-            font-size: 6pt;
-        }
-
-        .page.page-a6 .sign-space {
-            height: 8mm;
-        }
-
-        .page.page-a6 .dots {
-            height: 10px;
-            min-width: 8mm;
-        }
-
-        .page.page-a6 .label {
-            margin-right: 2px;
-        }
-
-        /* --- PORTRAIT (DỌC) MODE --- */
-        /* A5 Dọc: 148mm x 210mm */
-        .page.page-a5.page-portrait {
-            width: 148mm;
-            height: 210mm;
-            flex-direction: column;
-        }
-
-        /* A6 Dọc: 105mm x 148mm */
-        .page.page-a6.page-portrait {
-            width: 105mm;
-            height: 148mm;
-            flex-direction: column;
-        }
-
-        /* Portrait: 2 liên xếp trên-dưới */
-        .page.page-portrait .voucher-half {
-            width: 100%;
-            height: 50%;
-        }
-
-        /* Portrait: đường xé ngang */
-        .page.page-portrait .perforation {
-            left: 2%;
-            right: 2%;
-            top: 50%;
-            bottom: auto;
-            border-left: none;
-            border-top: 2px dashed var(--voucher-border-color);
-            transform: translateY(-50%);
-            width: auto;
-            height: 0;
-        }
-
-        /* === A6 DỌC: mỗi liên 105mm rộng × 74mm cao — nén tối đa chiều cao === */
-        .page.page-a6.page-portrait .voucher-half {
-            padding: 2mm 3mm 1.5mm 3mm;
-        }
-
-        .page.page-a6.page-portrait .header {
-            margin-bottom: 1mm;
-            padding-bottom: 0.5mm;
-        }
-
-        .page.page-a6.page-portrait .org-name {
-            font-size: 6pt;
-        }
-
-        .page.page-a6.page-portrait .org-info {
-            font-size: 5.5pt;
-        }
-
-        .page.page-a6.page-portrait .mst {
-            font-size: 5.5pt;
-        }
-
-        .page.page-a6.page-portrait .title-block {
-            margin: 0.5mm 0 1mm 0;
-        }
-
-        .page.page-a6.page-portrait .voucher-title {
-            font-size: 8pt;
-        }
-
-        .page.page-a6.page-portrait .serial-number {
-            font-size: 6.5pt;
-        }
-
-        .page.page-a6.page-portrait .lien-so {
-            font-size: 6.5pt;
-        }
-
-        .page.page-a6.page-portrait .lien-serial-row {
-            gap: 6px;
-            margin-top: 0;
-        }
-
-        .page.page-a6.page-portrait .body-content {
-            font-size: 7pt;
-            line-height: 1.2;
-        }
-
-        .page.page-a6.page-portrait .line {
-            margin-bottom: 0.8mm;
-        }
-
-        .page.page-a6.page-portrait .fuel-row {
-            margin-bottom: 0.5mm;
-            padding-left: 1.5mm;
-        }
-
-        .page.page-a6.page-portrait .fuel-section-gap {
-            margin-top: 0.5mm;
-        }
-
-        .page.page-a6.page-portrait .section-label {
-            font-size: inherit;
-            margin-bottom: 0;
-        }
-
-        .page.page-a6.page-portrait .footer {
-            font-size: 6.5pt;
-            margin-top: 1mm;
-            padding-top: 0.5mm;
-        }
-
-        .page.page-a6.page-portrait .date-line {
-            font-size: 6.5pt;
-            margin-bottom: 0.5mm;
-        }
-
-        .page.page-a6.page-portrait .sign-title {
-            font-size: 6.5pt;
-        }
-
-        .page.page-a6.page-portrait .sign-note {
-            font-size: 5.5pt;
-        }
-
-        .page.page-a6.page-portrait .sign-space {
-            height: 5mm;
-        }
-
-        .page.page-a6.page-portrait .dots {
-            height: 9px;
-            min-width: 6mm;
-        }
-
-        /* === A5 DỌC: mỗi liên 148mm rộng × 105mm cao — thoải mái hơn === */
-        .page.page-a5.page-portrait .voucher-half {
-            padding: 5mm 6mm 3mm 7mm;
-        }
-    </style>
+    <title>In Phiếu Xăng Dầu</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div id="sidebar">
         <div class="section-title">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -804,14 +79,104 @@
             Tùy chỉnh nội dung
         </div>
 
+        <!-- Sub: Phiếu & Liên -->
+        <div class="sub-section-title">Phiếu & Liên</div>
+
         <div class="form-group">
-            <label>Địa điểm nhận <span style="color:#94a3b8; font-weight:400;">(in sẵn trên phiếu)</span></label>
-            <input type="text" id="receiveLocation" placeholder="Để trống nếu muốn viết tay" oninput="updatePreview()">
-            <div class="checkbox-row">
-                <label class="checkbox-label"><input type="checkbox" id="locationBold" onchange="updatePreview()"> In đậm</label>
-                <label class="checkbox-label"><input type="checkbox" id="locationItalic" onchange="updatePreview()"> In nghiêng</label>
+            <label>Tiêu đề phiếu</label>
+            <input type="text" id="voucherTitle" placeholder="PHIẾU CẤP XĂNG DẦU" oninput="updatePreview()">
+        </div>
+
+        <div class="row" style="margin-bottom: 12px;">
+            <div class="col">
+                <label>Liên 1</label>
+                <input type="text" id="lien1Text" placeholder="(Liên 1: Lưu)" oninput="updatePreview()">
+            </div>
+            <div class="col">
+                <label>Liên 2</label>
+                <input type="text" id="lien2Text" placeholder="(Liên 2: Giao CH xăng dầu)" oninput="updatePreview()">
             </div>
         </div>
+
+        <!-- Sub: Dòng 1 -->
+        <div class="sub-section-title">Dòng 1</div>
+
+        <div class="row" style="margin-bottom: 6px;">
+            <div class="col">
+                <label>Nhãn</label>
+                <input type="text" id="locationLabel" placeholder="Địa điểm nhận" oninput="updatePreview()">
+            </div>
+            <div class="col">
+                <label>Giá trị <span style="color:#94a3b8; font-weight:400;">(in sẵn)</span></label>
+                <input type="text" id="receiveLocation" placeholder="Để trống = viết tay" oninput="updatePreview()">
+            </div>
+        </div>
+        <div class="checkbox-row" style="margin-bottom: 12px;">
+            <label class="checkbox-label"><input type="checkbox" id="locationBold" onchange="updatePreview()"> In đậm</label>
+            <label class="checkbox-label"><input type="checkbox" id="locationItalic" onchange="updatePreview()"> In nghiêng</label>
+        </div>
+
+        <!-- Sub: Dòng 2 -->
+        <div class="sub-section-title">Dòng 2</div>
+
+        <div class="row" style="margin-bottom: 6px;">
+            <div class="col">
+                <label>Nhãn ô 2a</label>
+                <input type="text" id="field1Label" placeholder="Biển số xe" oninput="updatePreview()">
+            </div>
+            <div class="col">
+                <label>Giá trị 2a <span style="color:#94a3b8; font-weight:400;">(in sẵn)</span></label>
+                <input type="text" id="field1Value" placeholder="Để trống = viết tay" oninput="updatePreview()">
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 12px;">
+            <div class="col">
+                <label>Nhãn ô 2b</label>
+                <input type="text" id="field2Label" placeholder="Tên lái xe" oninput="updatePreview()">
+            </div>
+            <div class="col">
+                <label>Giá trị 2b <span style="color:#94a3b8; font-weight:400;">(in sẵn)</span></label>
+                <input type="text" id="field2Value" placeholder="Để trống = viết tay" oninput="updatePreview()">
+            </div>
+        </div>
+
+        <!-- Sub: Mục nhiên liệu -->
+        <div class="sub-section-title">Mục nhiên liệu</div>
+
+        <div class="form-group">
+            <label>Tiêu đề mục</label>
+            <input type="text" id="fuelSectionLabel" placeholder="Số lượng xăng/dầu được cấp" oninput="updatePreview()">
+        </div>
+
+        <div class="row" style="margin-bottom: 6px;">
+            <div class="col">
+                <label>Nhãn số tiền</label>
+                <input type="text" id="moneyLabel" placeholder="Số tiền" oninput="updatePreview()">
+            </div>
+            <div class="col">
+                <label>Đơn vị</label>
+                <input type="text" id="moneyUnit" placeholder="VNĐ" oninput="updatePreview()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Giá trị số tiền <span style="color:#94a3b8; font-weight:400;">(in sẵn)</span></label>
+            <input type="text" id="moneyValue" placeholder="Để trống = viết tay" oninput="updatePreview()">
+        </div>
+
+        <div class="row" style="margin-bottom: 12px;">
+            <div class="col">
+                <label>Nhãn dòng cuối</label>
+                <input type="text" id="textAmountLabel" placeholder="Bằng chữ" oninput="updatePreview()">
+            </div>
+            <div class="col">
+                <label>Giá trị <span style="color:#94a3b8; font-weight:400;">(in sẵn)</span></label>
+                <input type="text" id="textAmountValue" placeholder="Để trống = viết tay" oninput="updatePreview()">
+            </div>
+        </div>
+
+        <hr class="divider">
 
         <div class="form-group">
             <label>Khổ giấy</label>
@@ -858,7 +223,7 @@
         </button>
 
         <div class="app-version">
-            Phiên bản: <strong>1.2.0</strong> &nbsp;|&nbsp; Cập nhật: <strong>10/02/2026</strong>
+            Phiên bản: <strong>1.4.0</strong> &nbsp;|&nbsp; Cập nhật: <strong>10/02/2026</strong>
         </div>
     </div>
 
@@ -868,379 +233,6 @@
 
     <div id="print-container"></div>
 
-    <script>
-        // --- CẤU HÌNH & STATE ---
-        const CONFIG_KEY = 'fuel_voucher_config';
-        const CONFIG_VERSION = 'v1.2.0-2026-02-10';
-        const MAX_LIMIT = 500;
-
-        // Lấy tất cả settings hiện tại từ form
-        function getSettings() {
-            return {
-                unitNameSize: parseFloat(document.getElementById('unitNameSize').value),
-                addressSize: parseFloat(document.getElementById('addressSize').value),
-                headerLineHeight: parseFloat(document.getElementById('headerLineHeight').value),
-                bodySize: parseFloat(document.getElementById('bodySize').value),
-                lineHeight: parseFloat(document.getElementById('lineHeight').value),
-            };
-        }
-
-        // Template HTML cho 1 tờ phiếu (2 liên)
-        const getVoucherTemplate = (data, serialNum, paperSize = 'A5', settings = {}, orientation = 'portrait') => {
-            const now = new Date();
-            const yy = now.getFullYear().toString().slice(-2);
-            const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-            const fullSerial = `${yy}${mm}/${serialNum.toString().padStart(4, '0')}`;
-            const pageClass = (paperSize === 'A6' ? 'page-a6' : 'page-a5') + (orientation === 'portrait' ? ' page-portrait' : '');
-
-            const orgNameStyle = settings.unitNameSize ? `font-size: ${settings.unitNameSize}pt` : '';
-            const addressStyle = settings.addressSize ? `font-size: ${settings.addressSize}pt` : '';
-            const headerStyle = settings.headerLineHeight ? `line-height: ${settings.headerLineHeight}` : '';
-            const bodyStyle = [
-                settings.bodySize ? `font-size: ${settings.bodySize}pt` : '',
-                settings.lineHeight ? `line-height: ${settings.lineHeight}` : '',
-            ].filter(Boolean).join('; ');
-
-            // MST: chỉ hiển thị nếu người dùng có nhập
-            const mstHtml = data.taxId && data.taxId.trim() !== ''
-                ? `<div class="mst">MST: ${data.taxId}</div>`
-                : '';
-
-            // Địa điểm nhận: nếu có giá trị thì in sẵn, không thì để dấu chấm
-            const locationValue = data.receiveLocation && data.receiveLocation.trim() !== '';
-            const locStyle = [
-                data.locationBold ? 'font-weight: bold' : '',
-                data.locationItalic ? 'font-style: italic' : '',
-            ].filter(Boolean).join('; ');
-            const locationHtml = locationValue
-                ? `<span class=""${locStyle ? ` style="${locStyle}"` : ''}>${data.receiveLocation}</span>`
-                : `<div class="dots"></div>`;
-
-            // Hàm render 1 nửa tờ giấy (1 liên)
-            const renderHalf = (lienText, lienLabel) => `
-                <div class="voucher-half">
-                    <div class="header" style="${headerStyle}">
-                        <div class="org-name" style="${orgNameStyle}">${data.unitName}</div>
-                        <div class="org-info" style="${addressStyle}">${data.address}</div>
-                        ${mstHtml}
-                    </div>
-
-                    <div class="title-block">
-                        <div class="voucher-title">PHIẾU CẤP XĂNG DẦU</div>
-                        <div class="lien-serial-row">
-                            <div class="lien-so">${lienText}</div>
-                            <div class="serial-number">Số: ${fullSerial}</div>
-                        </div>
-                    </div>
-
-                    <div class="body-content" style="${bodyStyle}">
-                        <div class="line">
-                            <span class="label">${lienLabel}:</span>
-                            ${locationHtml}
-                        </div>
-                        <div class="line">
-                            <span class="label">Biển số xe:</span>
-                            <div class="dots"></div>
-                            <span class="label" style="margin-left: 8px;">Tên lái xe:</span>
-                            <div class="dots"></div>
-                        </div>
-                        <div class="fuel-section-gap">
-                            <span class="section-label">Số lượng xăng/dầu được cấp</span>
-                        </div>
-                        <div class="fuel-row">
-                            <span class="label">Số tiền:</span>
-                            <div class="dots"></div>
-                            <span class="label">VNĐ</span>
-                        </div>
-                        <div class="fuel-row">
-                            <span class="label">Bằng chữ:</span>
-                            <div class="dots"></div>
-                        </div>
-                    </div>
-
-                    <div class="footer">
-                        <div class="sign-box">
-                            <div class="sign-title">Người nhận</div>
-                            <div class="sign-note">(Ký, ghi rõ họ tên)</div>
-                            <div class="sign-space"></div>
-                        </div>
-                        <div class="sign-box">
-                            <div class="date-line">Ngày ...... tháng ...... năm 20......</div>
-                            <div class="sign-title">Người lập phiếu</div>
-                            <div class="sign-note">(Ký, ghi rõ họ tên)</div>
-                            <div class="sign-space"></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            return `
-                <div class="page ${pageClass}">
-                    ${renderHalf('(Liên 1: Lưu)', 'Địa điểm nhận')}
-                    <div class="perforation"></div>
-                    ${renderHalf('(Liên 2: Giao cửa hàng xăng dầu)', 'Địa điểm nhận')}
-                </div>
-            `;
-        };
-
-        // --- LOGIC CHÍNH ---
-
-        function loadConfig() {
-            const saved = localStorage.getItem(CONFIG_KEY);
-
-            // Kiểm tra version token — nếu khác thì reset về mặc định
-            if (saved) {
-                const config = JSON.parse(saved);
-                if (config._version !== CONFIG_VERSION) {
-                    localStorage.removeItem(CONFIG_KEY);
-                    applyDefaults();
-                    updatePreview();
-                    return;
-                }
-            }
-
-            if (saved) {
-                const config = JSON.parse(saved);
-                document.getElementById('unitName').value = config.unitName || '';
-                document.getElementById('address').value = config.address || '';
-                document.getElementById('taxId').value = config.taxId || '';
-                document.getElementById('receiveLocation').value = config.receiveLocation || '';
-                if (config.locationBold !== undefined) {
-                    document.getElementById('locationBold').checked = config.locationBold;
-                }
-                if (config.locationItalic !== undefined) {
-                    document.getElementById('locationItalic').checked = config.locationItalic;
-                }
-
-                if (config.paperSize) {
-                    document.getElementById('paperSize').value = config.paperSize;
-                }
-                if (config.paperOrientation) {
-                    document.getElementById('paperOrientation').value = config.paperOrientation;
-                }
-                if (config.lastMax) {
-                    const nextNum = parseInt(config.lastMax) + 1;
-                    document.getElementById('minNum').value = nextNum;
-                    document.getElementById('maxNum').value = nextNum;
-                }
-
-                // Restore typography settings
-                if (config.unitNameSize !== undefined) {
-                    document.getElementById('unitNameSize').value = config.unitNameSize;
-                }
-                if (config.addressSize !== undefined) {
-                    document.getElementById('addressSize').value = config.addressSize;
-                }
-                if (config.headerLineHeight !== undefined) {
-                    document.getElementById('headerLineHeight').value = config.headerLineHeight;
-                }
-                if (config.bodySize !== undefined) {
-                    document.getElementById('bodySize').value = config.bodySize;
-                }
-                if (config.lineHeight !== undefined) {
-                    document.getElementById('lineHeight').value = config.lineHeight;
-                }
-            } else {
-                applyDefaults();
-            }
-            updatePreview();
-        }
-
-        function applyDefaults() {
-            document.getElementById('unitName').value = "CÔNG TY TNHH VẬN TẢI DỊCH VỤ DU LỊCH VIỆT LÀO";
-            document.getElementById('address').value = "28 Huỳnh Thúc Kháng, Phường Hải Châu, TP Đà Nẵng, Việt Nam";
-            document.getElementById('taxId').value = "0400467487";
-            document.getElementById('receiveLocation').value = '';
-        }
-
-        function saveConfig(currentMax) {
-            const config = {
-                _version: CONFIG_VERSION,
-                unitName: document.getElementById('unitName').value,
-                address: document.getElementById('address').value,
-                taxId: document.getElementById('taxId').value,
-                receiveLocation: document.getElementById('receiveLocation').value,
-                locationBold: document.getElementById('locationBold').checked,
-                locationItalic: document.getElementById('locationItalic').checked,
-                paperSize: document.getElementById('paperSize').value,
-                paperOrientation: document.getElementById('paperOrientation').value,
-                lastMax: currentMax,
-                unitNameSize: parseFloat(document.getElementById('unitNameSize').value),
-                addressSize: parseFloat(document.getElementById('addressSize').value),
-                headerLineHeight: parseFloat(document.getElementById('headerLineHeight').value),
-                bodySize: parseFloat(document.getElementById('bodySize').value),
-                lineHeight: parseFloat(document.getElementById('lineHeight').value),
-            };
-            localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-        }
-
-        // Auto-save config khi thay đổi bất kỳ setting nào (không ghi đè lastMax)
-        function autoSaveConfig() {
-            const saved = localStorage.getItem(CONFIG_KEY);
-            let lastMax = null;
-            if (saved) {
-                const old = JSON.parse(saved);
-                lastMax = old.lastMax;
-            }
-            const config = {
-                _version: CONFIG_VERSION,
-                unitName: document.getElementById('unitName').value,
-                address: document.getElementById('address').value,
-                taxId: document.getElementById('taxId').value,
-                receiveLocation: document.getElementById('receiveLocation').value,
-                locationBold: document.getElementById('locationBold').checked,
-                locationItalic: document.getElementById('locationItalic').checked,
-                paperSize: document.getElementById('paperSize').value,
-                paperOrientation: document.getElementById('paperOrientation').value,
-                lastMax: lastMax,
-                unitNameSize: parseFloat(document.getElementById('unitNameSize').value),
-                addressSize: parseFloat(document.getElementById('addressSize').value),
-                headerLineHeight: parseFloat(document.getElementById('headerLineHeight').value),
-                bodySize: parseFloat(document.getElementById('bodySize').value),
-                lineHeight: parseFloat(document.getElementById('lineHeight').value),
-            };
-            localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-        }
-
-        function getData() {
-            return {
-                unitName: document.getElementById('unitName').value,
-                address: document.getElementById('address').value,
-                taxId: document.getElementById('taxId').value,
-                receiveLocation: document.getElementById('receiveLocation').value,
-                locationBold: document.getElementById('locationBold').checked,
-                locationItalic: document.getElementById('locationItalic').checked,
-            };
-        }
-
-        function updatePreview() {
-            const data = getData();
-            const minVal = document.getElementById('minNum').value || 1;
-            const paperSize = document.getElementById('paperSize').value;
-            const orientation = document.getElementById('paperOrientation').value;
-            const settings = getSettings();
-            const html = getVoucherTemplate(data, minVal, paperSize, settings, orientation);
-            document.getElementById('preview-wrapper').innerHTML = html;
-
-            // Cập nhật label hiển thị giá trị range
-            document.getElementById('unitNameSizeVal').textContent = settings.unitNameSize;
-            document.getElementById('addressSizeVal').textContent = settings.addressSize;
-            document.getElementById('headerLineHeightVal').textContent = settings.headerLineHeight;
-            document.getElementById('bodySizeVal').textContent = settings.bodySize;
-            document.getElementById('lineHeightVal').textContent = settings.lineHeight;
-
-            // Cập nhật format preview
-            const now = new Date();
-            const yy = now.getFullYear().toString().slice(-2);
-            const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-            document.getElementById('formatPreview').innerText = `${yy}${mm}/XXXX`;
-
-            // Cập nhật số lượng phiếu
-            const min = parseInt(document.getElementById('minNum').value) || 1;
-            const max = parseInt(document.getElementById('maxNum').value) || 1;
-            const total = Math.max(0, max - min + 1);
-            document.getElementById('totalCount').textContent = total;
-
-            // Auto-save mỗi khi thay đổi
-            autoSaveConfig();
-        }
-
-        function handlePrint() {
-            const min = parseInt(document.getElementById('minNum').value);
-            const max = parseInt(document.getElementById('maxNum').value);
-            const paperSize = document.getElementById('paperSize').value;
-            const orientation = document.getElementById('paperOrientation').value;
-            const settings = getSettings();
-
-            if (isNaN(min) || isNaN(max) || min > max) {
-                alert("Số bắt đầu (Min) phải nhỏ hơn hoặc bằng Đến số (Max)!");
-                return;
-            }
-
-            if (min < 1) {
-                alert("Số bắt đầu (Min) phải lớn hơn 0!");
-                return;
-            }
-
-            const count = max - min + 1;
-            if (count > MAX_LIMIT) {
-                alert(`Hệ thống giới hạn in tối đa ${MAX_LIMIT} phiếu mỗi lần để đảm bảo hiệu năng.\nBạn đang yêu cầu ${count} phiếu.`);
-                return;
-            }
-
-            const orientLabel = orientation === 'portrait' ? 'Dọc' : 'Ngang';
-            const confirmMsg = `Bạn chuẩn bị in ${count} tờ phiếu (khổ ${paperSize} - ${orientLabel}).\nTừ số ${min} đến ${max}.\nMỗi tờ phiếu = 1 trang giấy (2 liên).\n\nNhấn OK để bắt đầu tạo lệnh in.`;
-            if (!confirm(confirmMsg)) return;
-
-            // 1. Render toàn bộ phiếu ra vùng in ẩn
-            const printContainer = document.getElementById('print-container');
-            printContainer.innerHTML = '';
-            const data = getData();
-
-            // Dùng DocumentFragment để tối ưu hiệu năng khi render nhiều phiếu
-            const fragment = document.createDocumentFragment();
-            const wrapper = document.createElement('div');
-
-            let allPagesHTML = '';
-            for (let i = min; i <= max; i++) {
-                allPagesHTML += getVoucherTemplate(data, i, paperSize, settings, orientation);
-            }
-            wrapper.innerHTML = allPagesHTML;
-
-            // Di chuyển các node thay vì innerHTML trực tiếp
-            while (wrapper.firstChild) {
-                fragment.appendChild(wrapper.firstChild);
-            }
-            printContainer.appendChild(fragment);
-
-            // 2. Lưu config
-            saveConfig(max);
-
-            // 3. Inject dynamic @page CSS cho đúng khổ giấy + hướng
-            const styleId = 'dynamic-print-style';
-            let styleEl = document.getElementById(styleId);
-            if (!styleEl) {
-                styleEl = document.createElement('style');
-                styleEl.id = styleId;
-                document.head.appendChild(styleEl);
-            }
-
-            // Kích thước @page: landscape = rộng x cao, portrait = hẹp x dài
-            const pageSizes = {
-                A5: { landscape: '210mm 148mm', portrait: '148mm 210mm' },
-                A6: { landscape: '148mm 105mm', portrait: '105mm 148mm' },
-            };
-            const pageSize = pageSizes[paperSize]?.[orientation] || pageSizes.A5.portrait;
-            styleEl.textContent = `@media print { @page { size: ${pageSize}; margin: 0; } }`;
-
-            // 4. Gọi lệnh in (chờ DOM render xong)
-            setTimeout(() => {
-                window.print();
-            }, 300);
-        }
-
-        function resetConfig() {
-            if(confirm('Xóa toàn bộ cấu hình đã lưu và đưa về mặc định?')) {
-                localStorage.removeItem(CONFIG_KEY);
-                location.reload();
-            }
-        }
-
-        function changePaperSize() {
-            updatePreview();
-        }
-
-        // Thêm listener cho maxNum để cập nhật số lượng
-        document.getElementById('maxNum').addEventListener('input', function() {
-            const min = parseInt(document.getElementById('minNum').value) || 1;
-            const max = parseInt(this.value) || 1;
-            const total = Math.max(0, max - min + 1);
-            document.getElementById('totalCount').textContent = total;
-            autoSaveConfig();
-        });
-
-        window.onload = loadConfig;
-
-    </script>
+    <script src="main.js"></script>
 </body>
 </html>

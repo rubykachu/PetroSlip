@@ -8,7 +8,7 @@ Công cụ web tĩnh (Single HTML File) giúp in phiếu cấp xăng dầu hàng
 
 ## Cách sử dụng
 
-1. Mở file `printer.html` bằng trình duyệt (Chrome, Edge, Firefox).
+1. Mở file `index.html` bằng trình duyệt (Chrome, Edge, Firefox).
 2. Điền thông tin công ty, chọn khổ giấy, nhập dải số seri.
 3. Bấm **IN PHIẾU NGAY**.
 
